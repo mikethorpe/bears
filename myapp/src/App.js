@@ -1,37 +1,12 @@
 import React from "react";
-import { BearItem } from "./BearItem";
+import { BearItemsWidget } from "./BearItemsWidget";
 
 function App() {
-  const bears = [
-    {
-      id: 1,
-      name: "Paddington",
-      type: "Deadbeat",
-    },
-    {
-      id: 2,
-      name: "Pooh",
-      type: "Honey",
-    },
-    {
-      id: 3,
-      name: "James",
-      type: "Polar",
-    },
-    {
-      id: 4,
-      name: "Jimbob",
-      type: "Dirty",
-    },
-  ];
-
-  const createBearItems = function () {
-    return bears.map((bear) => <BearItem name={bear.name} type={bear.type} />);
-  };
+  const bearsDb = [];
 
   return (
     <div className="App">
-      <ul>{createBearItems()}</ul>
+      <BearItemsWidget data={bearsDb} />
     </div>
   );
 }
