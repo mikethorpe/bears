@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { BearItem } from "./BearItem";
+import axios from "axios";
 
 let lastId = 0;
 
@@ -8,10 +9,20 @@ const getId = function () {
   return lastId;
 };
 
-export const BearItemsWidget = function ({ data }) {
-  const [bears, setBears] = useState(data);
+export const BearItemsWidget = function () {
+  const [bears, setBears] = useState([]);
   const [name, setName] = useState("");
   const [type, setType] = useState("");
+
+  async function fetchData() {
+    const response = await axios.get("http://localhost:3001/api/bears");
+    console.log(response);
+    setBears(response.data);
+  }
+
+  useEffect(() => {
+    fetchData();
+  }, []);
 
   const deleteBear = function (id) {
     const remainingBears = bears.filter((bear) => bear.id !== id);

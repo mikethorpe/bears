@@ -1,5 +1,8 @@
 const express = require("express");
 const app = express();
+const cors = require("cors");
+
+app.use(cors());
 
 const fakeBearsDatabase = [
   { id: 1, name: "Cyrill", type: "Smoking" },
@@ -20,4 +23,4 @@ app.get("/api/bears/:id", function (req, res) {
   res.json(bear);
 });
 
-app.listen(3000);
+app.listen(3001);
