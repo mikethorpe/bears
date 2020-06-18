@@ -14,8 +14,10 @@ export const BearItemsWidget = function () {
   const [name, setName] = useState("");
   const [type, setType] = useState("");
 
+  const bearsEndpoint = "http://localhost:3001/api/bears";
+
   async function fetchData() {
-    const response = await axios.get("http://localhost:3001/api/bears");
+    const response = await axios.get(bearsEndpoint);
     setBears(response.data);
   }
 
@@ -23,9 +25,10 @@ export const BearItemsWidget = function () {
     fetchData();
   }, []);
 
-  const deleteBear = function (id) {
-    const remainingBears = bears.filter((bear) => bear.id !== id);
-    setBears(remainingBears);
+
+  const deleteBear = async function (id) {
+    await axios.delete(`${bearsEndpoint}/${id}`);
+    await fetchData();
   };
 
   const updateName = function (event) {
@@ -48,7 +51,7 @@ export const BearItemsWidget = function () {
       name: name,
       type: type,
     };
-    await axios.post("http://localhost:3001/api/bears", newBear);
+    await axios.post(bearsEndpoint, newBear);
     await fetchData();
     setName("");
     setType("");
