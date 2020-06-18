@@ -16,7 +16,6 @@ export const BearItemsWidget = function () {
 
   async function fetchData() {
     const response = await axios.get("http://localhost:3001/api/bears");
-    console.log(response);
     setBears(response.data);
   }
 
@@ -43,13 +42,14 @@ export const BearItemsWidget = function () {
     ));
   };
 
-  const handleAddBearClicked = function () {
+  const handleAddBearClicked = async function () {
     const newBear = {
       id: getId(),
       name: name,
       type: type,
     };
-    setBears([...bears, newBear]);
+    await axios.post("http://localhost:3001/api/bears", newBear);
+    await fetchData();
     setName("");
     setType("");
   };
