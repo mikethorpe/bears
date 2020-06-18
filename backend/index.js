@@ -31,4 +31,11 @@ app.post("/api/bears", function (req, res) {
   res.send(newBear.id.toString());
 });
 
+app.delete("/api/bears/:id", function (req, res) {
+  const id = req.param("id");
+  const index = fakeBearsDatabase.findIndex(bear => bear.id == id);
+  fakeBearsDatabase.splice(index, 1);
+  res.send();
+});
+
 app.listen(3001);
