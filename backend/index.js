@@ -4,7 +4,10 @@ const cors = require("cors");
 const bodyParser = require("body-parser");
 
 app.use(cors());
-app.use(bodyParser());
+app.use(bodyParser.urlencoded({
+  extended: true
+}));
+app.use(bodyParser.json());
 
 const fakeBearsDatabase = [
   { id: 1, name: "Cyrill", type: "Smoking" },
