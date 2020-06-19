@@ -18,15 +18,17 @@ const dbConnectionProperties = {
   port: 5432,
 }
 
-//localhost:3000/api/bears
+//http://localhost:3001/api/bears
 app.get("/api/bears", async function (req, res) {
   const client = new Client(dbConnectionProperties);
   await client.connect();
-  const { rows: bears } = await client.query("SELECT * FROM bears");
+  const queryString = "SELECT * FROM bears";
+  const { rows: bears } = await client.query(queryString);
   await client.end();
   res.json(bears);
 });
 
+// TODO: Jude's challenge to fetch a single bear from the db
 //localhost:3000/api/bears/4
 // app.get("/api/bears/:id", function (req, res) {
 //   const bearId = parseInt(req.params.id);
@@ -34,6 +36,7 @@ app.get("/api/bears", async function (req, res) {
 //   res.json(bear);
 // });
 
+//http://localhost:3001/api/bears
 app.post("/api/bears", async function (req, res) {
   const newBear = req.body;
   const client = new Client(dbConnectionProperties);
@@ -45,6 +48,8 @@ app.post("/api/bears", async function (req, res) {
   res.send(response.rows[0].id.toString());
 });
 
+
+//http://localhost:3001/api/bears/1
 app.delete("/api/bears/:id", async function (req, res) {
   const id = req.params.id;
   const client = new Client(dbConnectionProperties);
