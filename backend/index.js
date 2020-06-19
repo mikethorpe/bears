@@ -2,6 +2,7 @@ const express = require("express");
 const app = express();
 const cors = require("cors");
 const bodyParser = require("body-parser");
+const { Client } = require('pg')
 
 app.use(cors());
 app.use(bodyParser.urlencoded({
@@ -9,35 +10,48 @@ app.use(bodyParser.urlencoded({
 }));
 app.use(bodyParser.json());
 
-const fakeBearsDatabase = [
-  { id: 1, name: "Cyrill", type: "Smoking" },
-  { id: 2, name: "Tad", type: "Doodle" },
-  { id: 3, name: "Jude", type: "SuperCodingBear" },
-  { id: 4, name: "Tim", type: "Abusive" },
-];
+const dbConnectionProperties = {
+  user: 'postgres',
+  host: 'localhost',
+  database: 'bearsdb',
+  password: 'm3g@l3gs',
+  port: 5432,
+}
 
 //localhost:3000/api/bears
-app.get("/api/bears", function (req, res) {
-  res.json(fakeBearsDatabase);
+app.get("/api/bears", async function (req, res) {
+  const client = new Client(dbConnectionProperties);
+  await client.connect();
+  const { rows: bears } = await client.query("SELECT * FROM bears");
+  await client.end();
+  res.json(bears);
 });
 
 //localhost:3000/api/bears/4
-app.get("/api/bears/:id", function (req, res) {
-  const bearId = parseInt(req.params.id);
-  const bear = fakeBearsDatabase.filter((bear) => bear.id === bearId)[0];
-  res.json(bear);
-});
+// app.get("/api/bears/:id", function (req, res) {
+//   const bearId = parseInt(req.params.id);
+//   const bear = fakeBearsDatabase.filter((bear) => bear.id === bearId)[0];
+//   res.json(bear);
+// });
 
-app.post("/api/bears", function (req, res) {
+app.post("/api/bears", async function (req, res) {
   const newBear = req.body;
-  fakeBearsDatabase.push(newBear);
-  res.send(newBear.id.toString());
+  const client = new Client(dbConnectionProperties);
+  await client.connect();
+  const queryString = "INSERT INTO bears (name, type) VALUES ($1, $2) RETURNING id";
+  const values = [newBear.name, newBear.type];
+  const response = await client.query(queryString, values);
+  await client.end();
+  res.send(response.rows[0].id.toString());
 });
 
-app.delete("/api/bears/:id", function (req, res) {
-  const id = req.param("id");
-  const index = fakeBearsDatabase.findIndex(bear => bear.id == id);
-  fakeBearsDatabase.splice(index, 1);
+app.delete("/api/bears/:id", async function (req, res) {
+  const id = req.params.id;
+  const client = new Client(dbConnectionProperties);
+  await client.connect();
+  const queryString = "DELETE FROM bears WHERE id = $1";
+  const values = [id];
+  await client.query(queryString, values);
   res.send();
 });
 
