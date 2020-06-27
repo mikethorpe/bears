@@ -39,7 +39,7 @@ app.post("/api/bears", async function (req, res) {
 app.get("/api/bears", async function (req, res) {
   const client = new Client(dbConnectionProperties);
   await client.connect();
-  const queryString = "SELECT * FROM bears";
+  const queryString = "SELECT * FROM bears ORDER BY id";
   const { rows: bears } = await client.query(queryString);
   await client.end();
   res.json(bears);
