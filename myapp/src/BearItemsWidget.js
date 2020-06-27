@@ -1,18 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { BearItem } from "./BearItem";
+import { EditBearPanel } from "./EditBearPanel";
 import axios from "axios";
-
-let lastId = 0;
-
-const getId = function () {
-  lastId--;
-  return lastId;
-};
 
 export const BearItemsWidget = function () {
   const [bears, setBears] = useState([]);
   const [name, setName] = useState("");
   const [type, setType] = useState("");
+  const [bearToEdit, setBearToEdit] = useState(null);
+
+  useEffect(() => {
+    console.log(bearToEdit);
+  }, [bearToEdit]);
 
   const bearsEndpoint = "http://localhost:3001/api/bears";
 
@@ -25,10 +24,15 @@ export const BearItemsWidget = function () {
     fetchData();
   }, []);
 
-
   const deleteBear = async function (id) {
     await axios.delete(`${bearsEndpoint}/${id}`);
     await fetchData();
+  };
+
+  const updateBear = async function (bearToUpdate) {
+    await axios.put(`${bearsEndpoint}/${bearToUpdate.id}`, bearToUpdate);
+    await fetchData();
+    clearBearToEdit();
   };
 
   const updateName = function (event) {
@@ -41,13 +45,17 @@ export const BearItemsWidget = function () {
 
   const createBearItems = function () {
     return bears.map((bear) => (
-      <BearItem key={bear.id} bear={bear} handleDeleteClicked={deleteBear} />
+      <BearItem
+        key={bear.id}
+        bear={bear}
+        handleDeleteClicked={deleteBear}
+        handleEditClicked={setBearToEdit}
+      />
     ));
   };
 
   const handleAddBearClicked = async function () {
     const newBear = {
-      id: getId(),
       name: name,
       type: type,
     };
@@ -55,6 +63,10 @@ export const BearItemsWidget = function () {
     await fetchData();
     setName("");
     setType("");
+  };
+
+  const clearBearToEdit = function () {
+    setBearToEdit(null);
   };
 
   return (
@@ -73,6 +85,13 @@ export const BearItemsWidget = function () {
       ></input>
       <button onClick={handleAddBearClicked}>Add bear</button>
       <ul>{createBearItems()}</ul>
+      {bearToEdit && (
+        <EditBearPanel
+          bear={bearToEdit}
+          handleCloseClick={clearBearToEdit}
+          handleUpdateClick={updateBear}
+        />
+      )}
     </div>
   );
 };
