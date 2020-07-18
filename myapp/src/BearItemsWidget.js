@@ -72,6 +72,7 @@ export const BearItemsWidget = function () {
   return (
     <div>
       <input
+        id="name-input"
         type="text"
         placeholder="Name"
         value={name}

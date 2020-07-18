@@ -6,7 +6,7 @@ export const BearItem = function ({
   handleEditClicked,
 }) {
   return (
-    <li>
+    <li className="bear-item">
       {`Name: ${bear.name}, Type: ${bear.type}`}{" "}
       <button onClick={() => handleDeleteClicked(bear.id)}>Delete</button>
       <button onClick={() => handleEditClicked(bear)}>Edit</button>
